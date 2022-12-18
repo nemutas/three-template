@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { gl } from '../core/WebGL'
-import fragmentShader from '../shader/mouseInvertFrag.glsl'
-import vertexShader from '../shader/mouseInvertVert.glsl'
+import fragmentShader from '../shaders/mouseInvertFrag.glsl'
+import vertexShader from '../shaders/mouseInvertVert.glsl'
 import { mouse2d } from '../utils/Mouse2D'
 
 class MouseInvert {

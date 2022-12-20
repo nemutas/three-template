@@ -13,3 +13,4 @@ npm install
 - [Vite](https://vitejs.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Sass](https://sass-lang.com/)
+- [WebGL GLSL Editor](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor) (v1.3.0)

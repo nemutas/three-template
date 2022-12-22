@@ -74,7 +74,7 @@ export class TCanvas {
   // ----------------------------------
   // dispose
   dispose() {
-    gl.dispose()
     this.animeID && cancelAnimationFrame(this.animeID)
+    gl.dispose()
   }
 }

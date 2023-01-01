@@ -9,8 +9,6 @@ import { calcCoveredTextureScale } from './utils/coveredTexture'
 import { controls } from './utils/OrbitControls'
 
 export class TCanvas {
-  private animeID?: number
-
   private assets: Assets = {
     image: { path: resolvePath('resources/unsplash.jpg') },
   }
@@ -19,7 +17,7 @@ export class TCanvas {
     loadAssets(this.assets).then(() => {
       this.init()
       this.createObjects()
-      this.setAnimationFrame()
+      gl.requestAnimationFrame(this.anime)
     })
   }
 
@@ -54,27 +52,21 @@ export class TCanvas {
   }
 
   // ----------------------------------
-  // animation frame
-  private setAnimationFrame() {
-    const anime = () => {
-      const dt = gl.time.getDelta()
+  // animation
+  private anime = () => {
+    const dt = gl.time.getDelta()
 
-      const plane = gl.getMesh<THREE.ShaderMaterial>('plane')
-      plane.material.uniforms.u_time.value += dt
+    const plane = gl.getMesh<THREE.ShaderMaterial>('plane')
+    plane.material.uniforms.u_time.value += dt
 
-      controls.update()
-      // gl.render()
-      effects.render()
-
-      requestAnimationFrame(anime)
-    }
-    this.animeID = requestAnimationFrame(anime)
+    controls.update()
+    // gl.render()
+    effects.render()
   }
 
   // ----------------------------------
   // dispose
   dispose() {
-    this.animeID && cancelAnimationFrame(this.animeID)
     gl.dispose()
   }
 }

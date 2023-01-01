@@ -53,8 +53,17 @@ class WebGL {
     this.renderer.render(this.scene, this.camera)
   }
 
+  requestAnimationFrame(callback: () => void) {
+    gl.renderer.setAnimationLoop(callback)
+  }
+
+  cancelAnimationFrame() {
+    gl.renderer.setAnimationLoop(null)
+  }
+
   dispose() {
-    gl.scene.traverse((child) => {
+    this.cancelAnimationFrame()
+    gl.scene?.traverse((child) => {
       if (child.type !== 'Scene') gl.scene.remove(child)
     })
   }

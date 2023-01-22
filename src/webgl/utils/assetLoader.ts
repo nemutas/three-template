@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader'
+import { resolvePath } from '../../scripts/utils'
 
 export type Assets = {
   [key in string]: {
@@ -23,20 +24,21 @@ export async function loadAssets(assets: Assets) {
 
   await Promise.all(
     Object.values(assets).map(async (v) => {
-      const extension = getExtension(v.path)
+      const path = resolvePath(v.path)
+      const extension = getExtension(path)
 
       if (['jpg', 'png', 'webp'].includes(extension)) {
-        const texture = await textureLoader.loadAsync(v.path)
+        const texture = await textureLoader.loadAsync(path)
         texture.userData.aspect = texture.image.width / texture.image.height
         v.encoding && (texture.encoding = THREE.sRGBEncoding)
         v.flipY !== undefined && (texture.flipY = v.flipY)
         v.data = texture
       } else if (['glb'].includes(extension)) {
-        const gltf = await gltfLoader.loadAsync(v.path)
+        const gltf = await gltfLoader.loadAsync(path)
         v.data = gltf
       } else if (['webm', 'mp4'].includes(extension)) {
         const video = document.createElement('video')
-        video.src = v.path
+        video.src = path
         video.muted = true
         video.loop = true
         video.autoplay = true
@@ -48,7 +50,7 @@ export async function loadAssets(assets: Assets) {
         v.encoding && (texture.encoding = THREE.sRGBEncoding)
         v.data = texture
       } else if (['hdr'].includes(extension)) {
-        const texture = await rgbeLoader.loadAsync(v.path)
+        const texture = await rgbeLoader.loadAsync(path)
         texture.mapping = THREE.EquirectangularReflectionMapping
         v.data = texture
       }

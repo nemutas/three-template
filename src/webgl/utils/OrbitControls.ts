@@ -10,6 +10,10 @@ class OrbitControls {
     this.orbitControls.dampingFactor = 0.1
   }
 
+  get primitive() {
+    return this.orbitControls
+  }
+
   disableDamping() {
     this.orbitControls.enableDamping = false
   }

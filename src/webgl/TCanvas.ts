@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { resolvePath } from '../scripts/utils'
 import { gl } from './core/WebGL'
 import { effects } from './effects/Effects'
 import fragmentShader from './shaders/planeFrag.glsl'
@@ -10,7 +9,7 @@ import { controls } from './utils/OrbitControls'
 
 export class TCanvas {
   private assets: Assets = {
-    image: { path: resolvePath('resources/unsplash.jpg') },
+    image: { path: 'resources/unsplash.jpg' },
   }
 
   constructor(private parentNode: ParentNode) {
@@ -33,9 +32,13 @@ export class TCanvas {
     const texture = this.assets.image.data as THREE.Texture
 
     const geometry = new THREE.PlaneGeometry(1.5, 1)
+
+    const screenAspect = geometry.parameters.width / geometry.parameters.height
+    const [scaleWidth, scaleHeight] = calcCoveredTextureScale(texture, screenAspect)
+
     const material = new THREE.ShaderMaterial({
       uniforms: {
-        u_image: { value: { texture, coveredScale: new THREE.Vector2(1, 1) } },
+        u_image: { value: { texture, coveredScale: new THREE.Vector2(scaleWidth, scaleHeight) } },
         u_time: { value: 0 },
       },
       vertexShader,
@@ -45,19 +48,14 @@ export class TCanvas {
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = 'plane'
 
-    const screenAspect = geometry.parameters.width / geometry.parameters.height
-    calcCoveredTextureScale(texture, screenAspect, material.uniforms.u_image.value.coveredScale)
-
     gl.scene.add(mesh)
   }
 
   // ----------------------------------
   // animation
   private anime = () => {
-    const dt = gl.time.getDelta()
-
     const plane = gl.getMesh<THREE.ShaderMaterial>('plane')
-    plane.material.uniforms.u_time.value += dt
+    plane.material.uniforms.u_time.value += gl.time.delta
 
     controls.update()
     // gl.render()

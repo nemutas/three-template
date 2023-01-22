@@ -4,8 +4,9 @@ class WebGL {
   public renderer: THREE.WebGLRenderer
   public scene: THREE.Scene
   public camera: THREE.PerspectiveCamera
-  public readonly time = new THREE.Clock()
+  public time = { delta: 0, elapsed: 0 }
 
+  private clock = new THREE.Clock()
   private resizeCallback?: () => void
 
   constructor() {
@@ -54,7 +55,11 @@ class WebGL {
   }
 
   requestAnimationFrame(callback: () => void) {
-    gl.renderer.setAnimationLoop(callback)
+    gl.renderer.setAnimationLoop(() => {
+      this.time.delta = this.clock.getDelta()
+      this.time.elapsed = this.clock.getElapsedTime()
+      callback()
+    })
   }
 
   cancelAnimationFrame() {
@@ -63,9 +68,7 @@ class WebGL {
 
   dispose() {
     this.cancelAnimationFrame()
-    gl.scene?.traverse((child) => {
-      if (child.type !== 'Scene') gl.scene.remove(child)
-    })
+    gl.scene?.clear()
   }
 }
 
